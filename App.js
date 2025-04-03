@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { Button, StyleSheet, Text, View, FlatList } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, { Marker } from "react-native-maps";
 import { API_KEY } from '@env';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
 
@@ -19,6 +20,11 @@ export default function App() {
 
   const [place, setPlace] = useState("");
   const [marker, setMarker] = useState(null);
+  const [placesList, setPlacesList] = useState([]);
+
+  useEffect(() => {
+    loadPlaces();
+  }, []);
 
   const searchPlace = async () => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(place)}&key=${API_KEY}`;
@@ -36,13 +42,39 @@ export default function App() {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         });
-
-        setMarker({ latitude: lat, longitude: lng });
+        const newPlace = { name: place, latitude: lat, longitude: lng };
+        setMarker(newPlace);
+        await savePlace(newPlace);
       } else {
         alert("Location not found");
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const savePlace = async (newPlace) => {
+    try {
+      const existingPlaces = await AsyncStorage.getItem("places");
+      let placesArray = existingPlaces ? JSON.parse(existingPlaces) : [];
+
+      placesArray.push(newPlace);
+      await AsyncStorage.setItem("places", JSON.stringify(placesArray));
+
+      setPlacesList(placesArray); // Update UI
+    } catch (error) {
+      console.error("Error saving place:", error);
+    }
+  };
+
+  const loadPlaces = async () => {
+    try {
+      const storedPlaces = await AsyncStorage.getItem("places");
+      if (storedPlaces) {
+        setPlacesList(JSON.parse(storedPlaces));
+      }
+    } catch (error) {
+      console.error("Error loading places:", error);
     }
   };
 
@@ -91,6 +123,16 @@ export default function App() {
         {marker && <Marker coordinate={marker} title={place} />}
       </MapView>
 
+      <FlatList
+        data={placesList}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text>{item.name}</Text>
+            <Text>Lat: {item.latitude}, Lng: {item.longitude}</Text>
+          </View>
+        )}
+      />
 
     </>
   );
@@ -140,5 +182,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     height: '50%',
     alignItems: 'center'
+  },
+  listItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
   }
 });
