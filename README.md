@@ -155,11 +155,11 @@ Before running the app, ensure you have:
 
 ## Screenshot
 
-![Google map view](Places-with-google-map/screenshots/1.jpeg)
-![Auto complete](Places-with-google-map/screenshots/2.jpeg)
-![Search button clicked](Places-with-google-map/screenshots/3.jpeg)
-![Searched Places](Places-with-google-map/screenshots/4.jpeg)
-![Map View](Places-with-google-map/screenshots/5.jpeg)
+![Google map view](screenshots/1.jpeg)
+![Auto complete](screenshots/2.jpeg)
+![Search button clicked](screenshots/3.jpeg)
+![Searched Places](screenshots/4.jpeg)
+![Map View](screenshots/5.jpeg)
 
 ## Contact
 
