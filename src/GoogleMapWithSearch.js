@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View, Platform, TouchableOpacity } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE, PROVIDER_DEFAULT } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_KEY } from '@env';
 
@@ -64,7 +64,7 @@ const GoogleMapWithSearch = ({ navigation }) => {
      <MapView
         style={styles.map}
         region={region}
-        provider={"google"} // Ensures Google Maps is used
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
      >
         {marker && <Marker coordinate={marker} title={place} />}
      </MapView>
@@ -73,7 +73,6 @@ const GoogleMapWithSearch = ({ navigation }) => {
         <GooglePlacesAutocomplete
           placeholder='Search location or Address'
           onPress={(data, details = null) => {
-            // 'details' is provided when fetchDetails = true
             setPlace(details.description);
           }}
           query={{
@@ -94,8 +93,12 @@ const GoogleMapWithSearch = ({ navigation }) => {
         />
 
         <View style= {styles.buttonContainer}>
-            <Button title='Search' style={styles.searchButton} onPress={searchPlace}/>
-            <Button title="View Searched Places" style={styles.searchButton} onPress={() => navigation.navigate("PlacesList")} />
+            <TouchableOpacity style={styles.searchButton} onPress={() => navigation.navigate("PlacesList")} >
+                <Text style={styles.buttonText}>View Searched Places</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.searchButton} onPress={searchPlace} >
+                <Text style={styles.buttonText}>Search</Text>
+            </TouchableOpacity>  
         </View>
         
      </View>
@@ -140,10 +143,28 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     searchButton: {
-      marginTop: 24,
-      alignItems: 'center',
-      marginBottom:24,
-      padding: 20
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        backgroundColor: '#061f56',
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...Platform.select({
+          ios: {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.8,
+            shadowRadius: 2,
+          },
+          android: {
+            elevation: 5,
+          },
+        }),
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     map: {
         ...StyleSheet.absoluteFillObject

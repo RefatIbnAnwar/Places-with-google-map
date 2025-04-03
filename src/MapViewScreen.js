@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import { View, Text, StyleSheet, Platform } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE, PROVIDER_DEFAULT } from "react-native-maps";
 
 
 const MapViewScreen = ({ route }) => {
@@ -10,6 +10,7 @@ const MapViewScreen = ({ route }) => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
         initialRegion={{
           latitude: place.latitude,
           longitude: place.longitude,

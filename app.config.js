@@ -20,7 +20,8 @@ export default {
         googleMaps: {
           apiKey: process.env.API_KEY, // Load from .env
         },
-      }
+      },
+      "bundleIdentifier": "com.anonymous.placeswithgooglemap"
     },
     android: {
       adaptiveIcon: {
@@ -32,6 +33,7 @@ export default {
           apiKey: process.env.API_KEY, // Load from .env
         },
       },
+      "package": "com.anonymous.placeswithgooglemap"
     },
     web: {
       favicon: "./assets/favicon.png",
