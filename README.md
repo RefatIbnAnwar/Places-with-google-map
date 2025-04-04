@@ -88,6 +88,12 @@ Then, in didFinishLaunchingWithOptions, add:
 <string>Your message to the user when asking for location permissions</string>
 ```
 
+add .env file and add API_KEY
+```
+API_KEY=GOOGLE_API_KEY
+
+```
+
 10. (Android) run the expo server by this command
 
 ```
